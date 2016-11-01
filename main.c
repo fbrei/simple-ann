@@ -19,7 +19,9 @@
 
 int main(int argc, char** argv) {
 
-	printf("Hello world!\n");
+	Neuron* n = alloc_neuron();
+
+	free_neuron(n);
 
 	return EXIT_SUCCESS;
 }

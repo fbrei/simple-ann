@@ -9,3 +9,13 @@
 
 // START
 // nothing yet
+
+#ifndef NEURON_H_
+#define NEURON_H_
+
+typedef struct _Neuron Neuron;
+
+Neuron* alloc_neuron();
+void free_neuron(Neuron* n);
+
+#endif

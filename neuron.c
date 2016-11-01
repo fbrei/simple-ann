@@ -15,4 +15,30 @@
 
 
 // START
-// nothing yet
+
+struct _Neuron {
+	// Input values
+	double x;
+	double y;
+
+	// Weights
+	double a;
+	double b;
+
+	// Constant
+	double c;
+};
+
+Neuron* alloc_neuron() {
+	Neuron* n = malloc(sizeof(Neuron));
+	n->x = 0;
+	n->y = 0;
+	n->a = 0;
+	n->b = 0;
+	n->c = 0;
+	return n;
+}
+
+void free_neuron(Neuron* n) {
+	free(n);
+}
