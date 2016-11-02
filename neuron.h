@@ -8,7 +8,6 @@
 
 
 // START
-// nothing yet
 
 #ifndef NEURON_H_
 #define NEURON_H_

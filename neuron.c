@@ -12,30 +12,40 @@
 
 // Local includes
 #include "neuron.h"
+#include "wire.h"
 
 
 // START
 
 struct _Neuron {
-	// Input values
-	double x;
-	double y;
+	// The incoming signals (dendrites)
+	Wire** dendrites;
+	int num_dendrites;
 
-	// Weights
-	double a;
-	double b;
+	// The weight vector
+	double* weights;
 
-	// Constant
-	double c;
+	// The outgoing connections
+	Wire** synapses;
+	int num_synapses;
+
+	// The activation function
+	double (*act)(double);
 };
 
 Neuron* alloc_neuron() {
 	Neuron* n = malloc(sizeof(Neuron));
-	n->x = 0;
-	n->y = 0;
-	n->a = 0;
-	n->b = 0;
-	n->c = 0;
+
+	n->dendrites = NULL;
+	n->num_dendrites = 0;
+
+	n->weights = NULL;
+
+	n->synapses = NULL;
+	n->num_synapses = 0;
+
+	n->act = NULL;
+
 	return n;
 }
 
