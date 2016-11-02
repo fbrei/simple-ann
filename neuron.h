@@ -6,6 +6,8 @@
 // -----------
 // This file contains the neuron api that is to be used in the main program
 
+// Local includes
+#include "wire.h"
 
 // START
 
@@ -16,5 +18,10 @@ typedef struct _Neuron Neuron;
 
 Neuron* alloc_neuron();
 void free_neuron(Neuron* n);
+
+void set_activation_function(Neuron*, double (*act)(double));
+double fire(Neuron*);
+
+void add_dendrite(Neuron*, Wire*);
 
 #endif

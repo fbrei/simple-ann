@@ -17,4 +17,7 @@ typedef struct _Wire Wire;
 Wire* alloc_wire();
 void free_wire(Wire* w);
 
+void set_signal_strength(Wire*, double);
+double get_signal_strength(Wire*);
+
 #endif

@@ -12,6 +12,7 @@
 #include <stdio.h>				// printf
 
 // Local includes
+#include "neuron.h"
 #include "wire.h"
 
 // START
@@ -29,7 +30,7 @@ struct _Wire {
 
 	// Link to the successor (where the signal is transported to)
 	Neuron* succ;
-}
+};
 
 Wire* alloc_wire() {
 	Wire* w = malloc(sizeof(Wire));
@@ -37,4 +38,18 @@ Wire* alloc_wire() {
 	w->gradient = 0.0;
 	w->pre = NULL;
 	w->succ = NULL;
+
+	return w;
+}
+
+void free_wire(Wire* w) {
+	free(w);
+}
+
+void set_signal_strength(Wire* w, double s) {
+	w->signal_strength = s;
+}
+
+double get_signal_strength(Wire* w) {
+	return w->signal_strength;
 }
