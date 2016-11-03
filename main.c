@@ -20,39 +20,69 @@
 
 int main(int argc, char** argv) {
 
-	// Create an empty neuron
-	Neuron* n = alloc_neuron();
+	const int BACKPROP_STEP_SIZE = 0.001;
 
-	// Set the activation function from a predefined selection
-	set_activation_function(n, SIGMOID);
+	// Create two input neurons
+	Neuron* in1 = alloc_neuron();
+	Neuron* in2 = alloc_neuron();
 
-	// Allocate two dendrites as input ...
-	Wire* x = alloc_wire();
-	Wire* y = alloc_wire();
+	// Create the output neuron
+	Neuron* out = alloc_neuron();
 
-	// ... and one synapse as output
-	Wire* out = alloc_wire();
+	// Both input neurons get two inputs
+	Wire* x1 = alloc_wire();
+	Wire* y1 = alloc_wire();
 
-	// Connect the dendrites and synapses to the neuron
-	add_dendrite(n,x);
-	add_dendrite(n,y);
+	Wire* x2 = alloc_wire();
+	Wire* y2 = alloc_wire();
 
-	add_synapse(n,out);
+	// Connect the inputs
+	add_dendrite(in1,x1);
+	add_dendrite(in1,y1);
 
-	// Set an arbitrary signal strength (just for testing)
-	// At some (hopefully not so distant) point of time in the future this will be the output of another neuron
-	set_signal_strength(x, 3.0);
-	set_signal_strength(y, -1.0);
+	add_dendrite(in2,x2);
+	add_dendrite(in2,y2);
 
-	// 'Run' the neuron
-	fire(n);
+	// Create the connections from input layer to output layer
+	Wire* z1 = alloc_wire();
+	Wire* z2 = alloc_wire();
 
-	// Collect the output
-	double z = get_signal_strength(out);
-	printf("Neuron fired: %f\n",z);
+	add_synapse(in1,z1);
+	add_synapse(in2,z2);
 
-	// Destroy the neuron
-	free_neuron(n);
+	add_dendrite(out,z1);
+	add_dendrite(out,z2);
+
+	// Create an output synapse
+	Wire* res = alloc_wire();
+	add_synapse(out,res);
+
+	// Set the activation functions (we use identity for easy debugging)
+	set_activation_function(in1, ID);
+	set_activation_function(in2, ID);
+	set_activation_function(out, ID);
+
+	// Set the input values, arbitrary
+	set_signal_strength(x1, 1.0);
+	set_signal_strength(y1, 2.0);
+
+	set_signal_strength(x2, 3.0);
+	set_signal_strength(y2, 4.0);
+
+	// Launch the neurons!
+	fire(in1);
+	fire(in2);
+	fire(out);
+
+	// Read from the out synapse
+	double result = get_signal_strength(res);
+
+	printf("The network calculated: %f\n", result);
+
+	// Cleanup
+	free_neuron(out);
+	free_neuron(in1);
+	free_neuron(in2);
 
 	// Yay!
 	return EXIT_SUCCESS;
