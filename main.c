@@ -1,6 +1,6 @@
 // Author .......... Felix Brei
 // Creation Date ... 2016/11/01
-// Last changed .... 2016/11/01
+// Last changed .... 2016/11/03
 
 // Description
 // -----------
@@ -9,37 +9,51 @@
 // System includes
 #include <stdlib.h>				// Contains useful constants
 #include <stdio.h>				// printf
-#include <math.h>
 
 // Local includes
 #include "neuron.h"
 #include "wire.h"
+#include "activation_functions.h"
 
 
 // START
 
-double id(double x) { return x; }
-double sigmoid(double x) { return 1.0 / (1.0 + exp(-x)); }
-
-
 int main(int argc, char** argv) {
 
+	// Create an empty neuron
 	Neuron* n = alloc_neuron();
-	set_activation_function(n,&sigmoid);
 
+	// Set the activation function from a predefined selection
+	set_activation_function(n, SIGMOID);
+
+	// Allocate two dendrites as input ...
 	Wire* x = alloc_wire();
 	Wire* y = alloc_wire();
 
+	// ... and one synapse as output
+	Wire* out = alloc_wire();
+
+	// Connect the dendrites and synapses to the neuron
 	add_dendrite(n,x);
 	add_dendrite(n,y);
 
-	set_signal_strength(x,4.0);
-	set_signal_strength(y,1.0);
+	add_synapse(n,out);
 
-	double out = fire(n);
-	printf("Neuron fired: %f\n",out);
+	// Set an arbitrary signal strength (just for testing)
+	// At some (hopefully not so distant) point of time in the future this will be the output of another neuron
+	set_signal_strength(x, 3.0);
+	set_signal_strength(y, -1.0);
 
+	// 'Run' the neuron
+	fire(n);
+
+	// Collect the output
+	double z = get_signal_strength(out);
+	printf("Neuron fired: %f\n",z);
+
+	// Destroy the neuron
 	free_neuron(n);
 
+	// Yay!
 	return EXIT_SUCCESS;
 }

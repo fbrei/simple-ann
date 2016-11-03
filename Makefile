@@ -4,3 +4,6 @@ OUTFILE=s-ann
 
 all:
 	$(CC) $(CFLAGS) -o $(OUTFILE) main.c neuron.c wire.c
+
+testrun: all
+	valgrind ./$(OUTFILE)
