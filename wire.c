@@ -63,7 +63,25 @@ void set_successor(Wire* w, Neuron* n) {
 	w->succ = n;
 }
 
+// Returns a link to a wire's successor
+Neuron* get_successor(Wire* w) {
+	return w->succ;
+}
+
 // Stores a link to a neuron inside a wire as its predecessor
 void set_predecessor(Wire* w, Neuron* n) {
 	w->pre = n;
+}
+
+// Returns a link to a wire's predecessor
+Neuron* get_predecessor(Wire* w) {
+	return w->pre;
+}
+
+void set_gradient(Wire* w, double x) {
+	w->gradient = x;
+}
+
+double get_gradient(Wire* w) {
+	return w->gradient;
 }

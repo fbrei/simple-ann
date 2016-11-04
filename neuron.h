@@ -30,4 +30,10 @@ void fire(Neuron*);
 void add_dendrite(Neuron*, Wire*);
 void add_synapse(Neuron*, Wire*);
 
+// Connect source neuron to destination neuron (order important!)
+void connect(Neuron* src, Neuron* dest);
+
+// Adjust the weights of a neuron, scaled by step size
+void backprop(Neuron*, double);
+
 #endif

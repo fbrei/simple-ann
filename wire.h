@@ -24,8 +24,16 @@ void free_wire(Wire* w);
 void set_signal_strength(Wire*, double);
 double get_signal_strength(Wire*);
 
-// Register successor and predecessor  of a connecting wire
+// Get and set successor
 void set_successor(Wire*, Neuron*);
+Neuron* get_successor(Wire*);
+
+// Get and set predecessor
 void set_predecessor(Wire*, Neuron*);
+Neuron* get_predecessor(Wire*);
+
+// Set and get the gradient that resides on a wire
+void set_gradient(Wire*, double);
+double get_gradient(Wire*);
 
 #endif

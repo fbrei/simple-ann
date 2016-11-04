@@ -15,12 +15,15 @@
 #include "wire.h"
 #include "activation_functions.h"
 
+double delta(double x, double y) {
+	return (x > y) ? x - y : y - x;
+}
 
 // START
 
 int main(int argc, char** argv) {
 
-	const int BACKPROP_STEP_SIZE = 0.001;
+	const double BACKPROP_STEP_SIZE = 0.0001;
 
 	// Create two input neurons
 	Neuron* in1 = alloc_neuron();
@@ -44,14 +47,8 @@ int main(int argc, char** argv) {
 	add_dendrite(in2,y2);
 
 	// Create the connections from input layer to output layer
-	Wire* z1 = alloc_wire();
-	Wire* z2 = alloc_wire();
-
-	add_synapse(in1,z1);
-	add_synapse(in2,z2);
-
-	add_dendrite(out,z1);
-	add_dendrite(out,z2);
+	connect(in1,out);
+	connect(in2,out);
 
 	// Create an output synapse
 	Wire* res = alloc_wire();
@@ -77,7 +74,44 @@ int main(int argc, char** argv) {
 	// Read from the out synapse
 	double result = get_signal_strength(res);
 
-	printf("The network calculated: %f\n", result);
+	printf("The network calculated: %f\n", result); // 10
+
+	// We want higher results, so ...
+	set_gradient(res, -1.0);
+	backprop(out, BACKPROP_STEP_SIZE);
+	backprop(in1, BACKPROP_STEP_SIZE);
+	backprop(in2, BACKPROP_STEP_SIZE);
+
+	fire(in1);
+	fire(in2);
+	fire(out);
+	result = get_signal_strength(res);
+	
+	printf("The network calculated: %f\n", result); // 10
+
+	// Now let's train the network to produce a goal value as output (just for fun)
+	double goal = 25.0;
+
+	double force = 0.0;
+	for(int i = 0; i < 10000; i++) {
+		result = get_signal_strength(res);
+		force = (result > goal) ? -1.0 : 1.0;
+		set_gradient(res, force);
+
+		backprop(out, BACKPROP_STEP_SIZE);
+		backprop(in1, BACKPROP_STEP_SIZE);
+		backprop(in2, BACKPROP_STEP_SIZE);
+
+		fire(in1);
+		fire(in2);
+		fire(out);
+
+		if(delta(result,goal) < 0.01) {
+			printf("Done after %d rounds: %f\n", i, result);
+			break;
+		}
+	}
+
 
 	// Cleanup
 	free_neuron(out);

@@ -110,6 +110,7 @@ void add_dendrite(Neuron* n, Wire* w) {
 		n->dendrites = new_dendrites;
 	}
 	set_successor(w, n);
+	set_gradient(w, 1.0);
 	n->num_dendrites++;
 }
 
@@ -121,4 +122,23 @@ void add_synapse(Neuron* n, Wire* w) {
 	}
 	set_predecessor(w,n);
 	n->num_synapses++;
+}
+
+void connect(Neuron* src, Neuron* dest) {
+	Wire* w = alloc_wire();
+	add_dendrite(dest, w);
+	add_synapse(src,w);
+}
+
+void backprop(Neuron* n, double STEP_SIZE) {
+	double incoming_gradient = get_gradient(n->synapses[0]);
+
+	n->theta += incoming_gradient * STEP_SIZE;
+	for(int i = 0; i < n->num_dendrites; i++) {
+		double weight = n->weights[i];
+		double signal = get_signal_strength(n->dendrites[i]);
+		n->weights[i] += incoming_gradient * STEP_SIZE  * signal;
+		set_signal_strength(n->dendrites[i], get_signal_strength(n->dendrites[i]) + incoming_gradient * STEP_SIZE * weight);
+		set_gradient(n->dendrites[i], weight);
+	}
 }
