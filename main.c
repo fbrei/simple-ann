@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
 	printf("The network calculated: %f\n", result); // 10
 
 	// We want higher results, so ...
-	set_gradient(res, -1.0);
+	set_gradient(res, 1.0);
 	backprop(out, BACKPROP_STEP_SIZE);
 	backprop(in1, BACKPROP_STEP_SIZE);
 	backprop(in2, BACKPROP_STEP_SIZE);
@@ -90,9 +90,11 @@ int main(int argc, char** argv) {
 	printf("The network calculated: %f\n", result); // 10
 
 	// Now let's train the network to produce a goal value as output (just for fun)
-	double goal = 25.0;
+	double goal = 15.0;
 
+	// The force that pulls the network in a specific direction, depending on the correctness of the output
 	double force = 0.0;
+
 	for(int i = 0; i < 10000; i++) {
 		result = get_signal_strength(res);
 		force = (result > goal) ? -1.0 : 1.0;
@@ -106,7 +108,7 @@ int main(int argc, char** argv) {
 		fire(in2);
 		fire(out);
 
-		if(delta(result,goal) < 0.01) {
+		if(delta(result,goal) < 0.00001) {
 			printf("Done after %d rounds: %f\n", i, result);
 			break;
 		}
