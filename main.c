@@ -9,6 +9,7 @@
 // System includes
 #include <stdlib.h>				// Contains useful constants
 #include <stdio.h>				// printf
+#include <math.h>
 
 // Local includes
 #include "neuron.h"
@@ -23,7 +24,7 @@ double delta(double x, double y) {
 
 int main(int argc, char** argv) {
 
-	const double BACKPROP_STEP_SIZE = 0.0001;
+	double BACKPROP_STEP_SIZE = 0.0001;
 
 	// Create two input neurons
 	Neuron* in1 = alloc_neuron();
@@ -186,6 +187,9 @@ int main(int argc, char** argv) {
 	int runs = 0;
 	while(correct != 6) {
 		runs++;
+
+		// Some tests
+		BACKPROP_STEP_SIZE = 1.0 / log(runs + 1);
 		correct = 0;
 		for(int j = 0; j < 6; j++) {
 			set_signal_strength(class_x, feature_vectors[j][0]);

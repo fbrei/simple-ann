@@ -131,7 +131,11 @@ void connect(Neuron* src, Neuron* dest) {
 }
 
 void backprop(Neuron* n, double STEP_SIZE) {
-	double incoming_gradient = get_gradient(n->synapses[0]);
+	double incoming_gradient = 0.0;
+
+	for(int i = 0; i < n->num_synapses; i++) {
+		incoming_gradient += get_gradient(n->synapses[i]);
+	}
 
 	n->theta += incoming_gradient * STEP_SIZE;
 	for(int i = 0; i < n->num_dendrites; i++) {
