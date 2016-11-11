@@ -6,25 +6,34 @@
 // -----------
 // This file contains a ready-to-use collection of popular activation functions
 
-// System includes
-#include <math.h>		// contains exp(x)
-
-// START
+// The usual header guard
 
 #ifndef ACTIVATION_FUNCTIONS_H_
 #define ACTIVATION_FUNCTIONS_H_
 
-// The identity function
-double id(double x) { return x; }
+// System includes
 
-// Widely used sigmoid function ('squashing function')
-double sigmoid(double x) { return 1.0 / (1.0 + exp(-x)); }
+// Local includes
+#include "typedefs.h"
 
-// Jump function 0->1 at x = 0
-double binary(double x) { return (x > 0.0) ? 1.0 : 0.0; }
+// START
 
-double (*ID)(double) = &id;
-double (*SIGMOID)(double) = &sigmoid;
-double (*BINARY)(double) = &binary;
+// Identity function (a.k.a. 'do nothing')
+ActFunction* ID;
+
+// Infamous sigmoid function ('squashing function')
+ActFunction* SIGMOID;
+
+// Initialize the default activation functions
+void init_activation_functions();
+
+// Clean up after you are done
+void free_activation_functions();
+
+// Calculate the value of a function
+double calculate_value(ActFunction*, double);
+
+// Calculate the gradient
+double calculate_gradient(ActFunction*, double);
 
 #endif

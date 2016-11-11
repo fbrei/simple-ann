@@ -14,16 +14,18 @@
 // Local includes
 #include "neuron.h"
 #include "wire.h"
-#include "activation_functions.h"
-
-double delta(double x, double y) {
-	return (x > y) ? x - y : y - x;
-}
+#include "activation_function.h"
 
 // START
 
 int main(int argc, char** argv) {
 
+	init_activation_functions();
+
+	printf("sigmoid(1.0) = %f\n", calculate_value(SIGMOID, 1.0));
+	printf("The gradient is: %f\n", calculate_gradient(SIGMOID, 1.0));
+
+	free_activation_functions();
 
 	return EXIT_SUCCESS;
 }
