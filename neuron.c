@@ -13,7 +13,7 @@
 // Local includes
 #include "neuron.h"
 #include "wire.h"
-
+#include "activation_function.h"
 
 // START
 
@@ -30,7 +30,7 @@ struct _Neuron {
 	int num_synapses;
 
 	// The activation function and its threshold
-	double (*act)(double);
+	ActFunction* act;
 	double theta;
 };
 
@@ -70,7 +70,7 @@ void free_neuron(Neuron* n) {
 }
 
 // Sets the activation function of a given neuron
-void set_activation_function(Neuron* n, double (*act)(double)) {
+void set_activation_function(Neuron* n, ActFunction* act) {
 	n->act = act;
 }
 
@@ -82,8 +82,7 @@ void fire(Neuron* n) {
 	}
 
 	for(int i = 0; i < n->num_synapses; i++) {
-		set_signal_strength(n->synapses[i],(*(n->act))(x));
-	
+		set_signal_strength(n->synapses[i],calculate_value(n->act, x));
 	}
 }
 

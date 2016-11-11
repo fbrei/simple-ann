@@ -21,7 +21,7 @@ Neuron* alloc_neuron();
 void free_neuron(Neuron* n);
 
 // Define the activation function
-void set_activation_function(Neuron*, double (*act)(double));
+void set_activation_function(Neuron*, ActFunction*);
 
 // 'Run' the neuron
 void fire(Neuron*);
