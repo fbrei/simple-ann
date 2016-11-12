@@ -41,7 +41,27 @@ int main(int argc, char** argv) {
 
 	double res = get_signal_strength(z);
 
-	printf("sigmoid(%f) = %f\n", 1.0, res);
+	printf("sigmoid(%f) = %f\n", get_signal_strength(x) + get_signal_strength(y), res);
+
+	set_gradient(z,-1.0);
+
+	backprop(n, 1.0);
+
+	fire(n);
+
+	res = get_signal_strength(z);
+
+	printf("sigmoid(%f) = %f\n", get_signal_strength(x) + get_signal_strength(y), res);
+
+	set_gradient(z,1.0);
+
+	backprop(n, 1.0);
+
+	fire(n);
+
+	res = get_signal_strength(z);
+
+	printf("sigmoid(%f) = %f\n", get_signal_strength(x) + get_signal_strength(y), res);
 
 	free_neuron(n);
 

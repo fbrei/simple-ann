@@ -1,12 +1,15 @@
+==========================================
 Simple implementation of a neuronal netwok
-##########################################
+==========================================
 
-Possible so far:
-	Create static networks
-	Arbitrary activation function, BUT...
+This is my implementation of a simple layer based neural network.
+It creates feed forward networks and is trained by backpropagation.
+The main function implements some sample stuff that I use for testing and that gets moved to sample.c later in the process.
 
-Still todo:
-	Backprop only works correct for identity function
-	Implement a function to generate the perceptive map of a NN
-	make training more abstract
-	dump NN to file and be able to read a NN from a file
+Todo List
+=========
+
+- So far you can only create single neurons. => implement layer architecture with some automizations and useful defaults
+- Implement a function that generates the perceptive map of a NN
+- simplify training process
+- allow to save the trained NN to a file and also read from it
