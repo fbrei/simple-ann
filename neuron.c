@@ -136,12 +136,18 @@ void backprop(Neuron* n, double STEP_SIZE) {
 		incoming_gradient += get_gradient(n->synapses[i]);
 	}
 
+	double net = 0.0;
+	for(int i = 0; i < n->num_dendrites; i++) {
+		net += get_signal_strength(n->dendrites[i]);
+	} 
+	double local_grad = calculate_gradient(n->act, net);
+
 	n->theta += incoming_gradient * STEP_SIZE;
 	for(int i = 0; i < n->num_dendrites; i++) {
 		double weight = n->weights[i];
 		double signal = get_signal_strength(n->dendrites[i]);
-		n->weights[i] += incoming_gradient * STEP_SIZE  * signal;
-		set_signal_strength(n->dendrites[i], get_signal_strength(n->dendrites[i]) + incoming_gradient * STEP_SIZE * weight);
-		set_gradient(n->dendrites[i], weight);
+		n->weights[i] += incoming_gradient * STEP_SIZE  * signal * local_grad;
+		set_signal_strength(n->dendrites[i], get_signal_strength(n->dendrites[i]) + incoming_gradient * STEP_SIZE * weight * local_grad);
+		set_gradient(n->dendrites[i], weight * local_grad );
 	}
 }
