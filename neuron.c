@@ -118,7 +118,17 @@ void add_synapse(Neuron* n, Wire* w) {
 	if(n->num_synapses == 0) {
 		n->synapses = malloc(sizeof(Wire*));
 		n->synapses[0] = w;
+	} else {
+		Wire** new_synapses = malloc( (n->num_synapses+1) * sizeof(Wire*));
+		for(int i = 0; i < n->num_synapses; i++) {
+			new_synapses[i] = n->synapses[i];
+		}
+		new_synapses[n->num_synapses] = w;
+		free(n->synapses);
+		n->synapses = new_synapses;
 	}
+
+
 	set_predecessor(w,n);
 	n->num_synapses++;
 }

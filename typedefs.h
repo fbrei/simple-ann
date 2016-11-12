@@ -13,3 +13,5 @@ typedef struct _Neuron Neuron;
 typedef struct _Wire Wire;
 
 typedef struct _ActFunction ActFunction;
+
+typedef struct _NeuronLayer NeuronLayer;

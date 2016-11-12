@@ -15,56 +15,21 @@
 #include "neuron.h"
 #include "wire.h"
 #include "activation_function.h"
+#include "neuron_layer.h"
 
 // START
 
 int main(int argc, char** argv) {
 
 	init_activation_functions();
+	
+	NeuronLayer* first = alloc_neuron_layer(32, SIGMOID);
+	NeuronLayer* second = alloc_neuron_layer(32, SIGMOID);
 
-	Neuron* n = alloc_neuron();
-	set_activation_function(n, SIGMOID);
+	connect_layers(first,second);
 
-	Wire *x = alloc_wire();
-	add_dendrite(n,x);
-
-	Wire* y = alloc_wire();
-	add_dendrite(n,y);
-
-	Wire* z = alloc_wire();
-	add_synapse(n,z);
-
-	set_signal_strength(x,2.0);
-	set_signal_strength(y,-1.0);
-
-	fire(n);
-
-	double res = get_signal_strength(z);
-
-	printf("sigmoid(%f) = %f\n", get_signal_strength(x) + get_signal_strength(y), res);
-
-	set_gradient(z,-1.0);
-
-	backprop(n, 1.0);
-
-	fire(n);
-
-	res = get_signal_strength(z);
-
-	printf("sigmoid(%f) = %f\n", get_signal_strength(x) + get_signal_strength(y), res);
-
-	set_gradient(z,1.0);
-
-	backprop(n, 1.0);
-
-	fire(n);
-
-	res = get_signal_strength(z);
-
-	printf("sigmoid(%f) = %f\n", get_signal_strength(x) + get_signal_strength(y), res);
-
-	free_neuron(n);
-
+	free_neuron_layer(first);
+	free_neuron_layer(second);
 	free_activation_functions();
 
 	return EXIT_SUCCESS;

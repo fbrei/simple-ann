@@ -18,6 +18,12 @@
 
 // START
 
+// Takes the number of neurons and their activation functions as arguments
+NeuronLayer* alloc_neuron_layer(int, ActFunction*);
 
+// Frees a given neuron layer
+void free_neuron_layer(NeuronLayer*);
+
+void connect_layers(NeuronLayer* src, NeuronLayer* dest);
 
 #endif
