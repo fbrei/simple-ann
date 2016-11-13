@@ -23,13 +23,18 @@ int main(int argc, char** argv) {
 
 	init_activation_functions();
 	
-	NeuronLayer* first = alloc_neuron_layer(32, SIGMOID);
-	NeuronLayer* second = alloc_neuron_layer(32, SIGMOID);
+	NeuronLayer* first = alloc_neuron_layer(64, SIGMOID);
+	NeuronLayer* second = alloc_neuron_layer(64, SIGMOID);
+	NeuronLayer* third = alloc_neuron_layer(64, SIGMOID);
 
 	connect_layers(first,second);
+	connect_layers(first,third);
+	connect_layers(second,third);
 
 	free_neuron_layer(first);
 	free_neuron_layer(second);
+	free_neuron_layer(third);
+
 	free_activation_functions();
 
 	return EXIT_SUCCESS;

@@ -30,6 +30,10 @@ void fire(Neuron*);
 void add_dendrite(Neuron*, Wire*);
 void add_synapse(Neuron*, Wire*);
 
+// Remove a dendrite or synapse from a neuron
+void remove_dendrite(Neuron*, Wire*);
+void remove_synapse(Neuron*, Wire*);
+
 // Connect source neuron to destination neuron (order important!)
 void connect(Neuron* src, Neuron* dest);
 

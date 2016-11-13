@@ -8,7 +8,6 @@
 
 // System includes
 #include <stdlib.h>				// Contains useful constants
-#include <stdio.h>				// printf
 
 // Local includes
 #include "neuron.h"
@@ -55,9 +54,11 @@ Neuron* alloc_neuron() {
 // Frees a given neuron and destroys all its dendrites and synapes too, since they would be loose ends otherwise
 void free_neuron(Neuron* n) {
 	for(int i = 0; i < n->num_dendrites; i++) {
+		remove_synapse(get_predecessor(n->dendrites[i]), n->dendrites[i]);
 		free_wire(n->dendrites[i]);
 	}
 	for(int i = 0; i < n->num_synapses; i++) {
+		remove_dendrite(get_successor(n->synapses[i]), n->synapses[i]);
 		free_wire(n->synapses[i]);
 	}
 
@@ -113,6 +114,43 @@ void add_dendrite(Neuron* n, Wire* w) {
 	n->num_dendrites++;
 }
 
+void remove_dendrite(Neuron* n, Wire* w) {
+
+	int num_dendrites = n->num_dendrites;
+
+	if( num_dendrites == 1) {
+
+		free(n->weights);
+		n->weights = NULL;
+		free(n->dendrites);
+		n->dendrites = NULL;
+		n->num_dendrites = 0;
+
+	} else if ( num_dendrites > 1 ) {
+	
+		int offset = 0;
+
+		Wire** new_dendrites = malloc( (num_dendrites-1) * sizeof(Wire*) );
+
+		double* new_weights = malloc( (num_dendrites-1) * sizeof(double) );
+		for(int i = 0; i < num_dendrites - 1; i++) {
+			if( n->dendrites[i] == w ) {
+				offset = 1;
+			}
+
+			new_dendrites[i] = n->dendrites[i+offset];
+			new_weights[i] = n->weights[i+offset];
+		}
+
+		free(n->weights);
+		free(n->dendrites);
+		n->weights =  new_weights;
+		n->dendrites = new_dendrites;
+		n->num_dendrites--;
+	
+	}
+}
+
 // Adds a synapse (output) to a neuron
 void add_synapse(Neuron* n, Wire* w) {
 	if(n->num_synapses == 0) {
@@ -131,6 +169,35 @@ void add_synapse(Neuron* n, Wire* w) {
 
 	set_predecessor(w,n);
 	n->num_synapses++;
+}
+
+void remove_synapse(Neuron* n, Wire* w) {
+	
+	int num_synapses = n->num_synapses;
+
+	if( num_synapses == 1 ) {
+		free(n->synapses);
+		n->synapses = NULL;
+		n->num_synapses = 0;
+	} else if ( num_synapses > 1 ) {
+	
+		int offset = 0;
+
+		Wire** new_synapses = malloc( (num_synapses-1) * sizeof(Wire*));
+		
+		for(int i = 0; i < num_synapses - 1; i++) {
+			if( n->synapses[i] == w) {
+				offset = 1;
+			}
+
+			new_synapses[i] = n->synapses[i+offset];
+		}
+
+		free(n->synapses);
+		n->synapses = new_synapses;
+		n->num_synapses--;
+	}
+	
 }
 
 void connect(Neuron* src, Neuron* dest) {
