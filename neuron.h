@@ -40,4 +40,11 @@ void connect(Neuron* src, Neuron* dest);
 // Adjust the weights of a neuron, scaled by step size
 void backprop(Neuron*, double);
 
+// Allow access to inputs and outputs
+int get_num_dendrites(Neuron*);
+Wire** get_dendrites(Neuron*);
+
+int get_num_synapses(Neuron*);
+Wire** get_synapses(Neuron*);
+
 #endif

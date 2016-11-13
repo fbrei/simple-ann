@@ -60,6 +60,14 @@ void connect_layers(NeuronLayer* src, NeuronLayer* dest) {
 
 }
 
+void fire_all(NeuronLayer* nl) {
+	int num_neurons = nl->num_neurons;
+
+	for(int i = 0; i < num_neurons; i++) {
+		fire(nl->neurons[i]);
+	}
+}
+
 NeuronLayer* create_input(int num_neurons, int inputs_per_neuron, ActFunction* act) {
 
 	NeuronLayer* nl = malloc(sizeof(NeuronLayer));
@@ -89,9 +97,42 @@ NeuronLayer* create_output(int num_neurons, ActFunction* act) {
 		Neuron* n = alloc_neuron();
 		set_activation_function(n,act);
 		Wire* w = alloc_wire();
+		set_gradient(w,1.0);
 		add_synapse(n,w);
 		nl->neurons[i] = n;
 	}
 
 	return nl;
+}
+
+void set_input(NeuronLayer* nl, double* input_vector) {
+	int num_neurons = nl->num_neurons;
+
+	for(int i = 0; i < num_neurons; i++) {
+		Neuron* n = nl->neurons[i];
+		Wire* in = get_dendrites(n)[0];
+		set_signal_strength(in, input_vector[i]);
+	}
+}
+
+double* get_output(NeuronLayer* nl) {
+	int num_neurons = nl->num_neurons;
+
+	double* out = malloc( num_neurons * sizeof(double) );
+	for(int i = 0; i < num_neurons; i++) {
+		Neuron* n = nl->neurons[i];
+		Wire* w = get_synapses(n)[0];
+		out[i] = get_signal_strength(w);
+	}
+
+	return out;
+}
+
+void backprop_all(NeuronLayer* nl, double force) {
+	int num_neurons = nl->num_neurons;
+
+	for(int i = 0; i < num_neurons; i++) {
+		backprop(nl->neurons[i], force);
+	}
+
 }

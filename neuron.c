@@ -102,7 +102,7 @@ void add_dendrite(Neuron* n, Wire* w) {
 			new_weights[i] = n->weights[i];
 		}
 		new_dendrites[n->num_dendrites] = w;
-		new_weights[n->num_dendrites] = 1.0;
+		new_weights[n->num_dendrites] = ((double) rand()) / RAND_MAX;
 
 		free(n->weights);
 		free(n->dendrites);
@@ -234,3 +234,9 @@ void backprop(Neuron* n, double STEP_SIZE) {
 		set_gradient(n->dendrites[i], weight * local_grad );
 	}
 }
+
+int get_num_dendrites(Neuron* n) { return n->num_dendrites; }
+Wire** get_dendrites(Neuron* n) { return n->dendrites; }
+
+int get_num_synapses(Neuron* n) { return n->num_synapses; }
+Wire** get_synapses(Neuron* n) { return n->synapses; }

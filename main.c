@@ -10,6 +10,7 @@
 #include <stdlib.h>				// Contains useful constants
 #include <stdio.h>				// printf
 #include <math.h>
+#include <time.h>
 
 // Local includes
 #include "neuron.h"
@@ -22,11 +23,13 @@
 int main(int argc, char** argv) {
 
 	// Preparation
+	time_t t;
+	srand((unsigned) time(&t));
 	init_activation_functions();
 
 	// Configuration variables
-	const int NUM_HIDDEN_LAYERS = 6;
-	const int NUM_NEURONS_PER_HIDDEN_LAYER = 256;
+	const int NUM_HIDDEN_LAYERS = 3;
+	const int NUM_NEURONS_PER_HIDDEN_LAYER = 64;
 	ActFunction* ACT_FUNCTION = ID;
 
 	const int NUM_INPUTS = 2;
@@ -53,10 +56,44 @@ int main(int argc, char** argv) {
 	// ===========================================================================
 	// Insert magic here
 
+	double* test = malloc(2 * sizeof(double));
+	test[0] = 1.0;
+	test[1] = 0.0;
+
+	set_input(in, test);
+
+	fire_all(in);
+	for(int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
+		fire_all(hidden[i]);
+	}
+	fire_all(out);
+
+	double* res = get_output(out);
+
+	printf("The network fired: %f | %f | %f \n", res[0], res[1], res[2]);
+	free(res);
+
+	backprop_all(out,-0.0001);
+	for(int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
+		backprop_all(hidden[i], -0.0001);
+	}
+	backprop_all(in, -0.0001);
+
+	set_input(in, test);
+
+	fire_all(in);
+	for(int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
+		fire_all(hidden[i]);
+	}
+	fire_all(out);
+
+	res = get_output(out);
+
+	printf("The network fired: %f | %f | %f \n", res[0], res[1], res[2]);
 
 
-
-
+	free(test);
+	free(res);
 
 	// End of magic
 	// ===========================================================================
