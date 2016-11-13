@@ -1,6 +1,6 @@
 // Author .......... Felix Brei
 // Creation Date ... 2016/11/01
-// Last changed .... 2016/11/11
+// Last changed .... 2016/11/13
 
 // Description
 // -----------
@@ -21,19 +21,55 @@
 
 int main(int argc, char** argv) {
 
+	// Preparation
 	init_activation_functions();
+
+	// Configuration variables
+	const int NUM_HIDDEN_LAYERS = 6;
+	const int NUM_NEURONS_PER_HIDDEN_LAYER = 256;
+	ActFunction* ACT_FUNCTION = ID;
+
+	const int NUM_INPUTS = 2;
+	const int NUM_OUTPUTS = 3;
 	
-	NeuronLayer* first = alloc_neuron_layer(64, SIGMOID);
-	NeuronLayer* second = alloc_neuron_layer(64, SIGMOID);
-	NeuronLayer* third = alloc_neuron_layer(64, SIGMOID);
 
-	connect_layers(first,second);
-	connect_layers(first,third);
-	connect_layers(second,third);
+	// Allocate and connect everything
+	NeuronLayer* in = create_input(NUM_INPUTS,1, ACT_FUNCTION);
+	NeuronLayer* out = create_output(NUM_OUTPUTS, ACT_FUNCTION);
 
-	free_neuron_layer(first);
-	free_neuron_layer(second);
-	free_neuron_layer(third);
+	NeuronLayer** hidden = malloc( NUM_HIDDEN_LAYERS * sizeof(NeuronLayer*) );
+	
+	hidden[0] = alloc_neuron_layer(NUM_NEURONS_PER_HIDDEN_LAYER, ACT_FUNCTION);
+	connect_layers(in, hidden[0]);
+
+	for(int i = 1; i < NUM_HIDDEN_LAYERS; i++) {
+		hidden[i] = alloc_neuron_layer(NUM_NEURONS_PER_HIDDEN_LAYER, ACT_FUNCTION);
+		connect_layers(hidden[i-1], hidden[i]);
+	}
+
+	connect_layers(hidden[NUM_HIDDEN_LAYERS-1], out);
+
+
+	// ===========================================================================
+	// Insert magic here
+
+
+
+
+
+
+	// End of magic
+	// ===========================================================================
+
+
+	// Freeing stuff
+
+	for(int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
+		free_neuron_layer(hidden[i]);
+	}
+	free(hidden);
+	free_neuron_layer(in);
+	free_neuron_layer(out);
 
 	free_activation_functions();
 

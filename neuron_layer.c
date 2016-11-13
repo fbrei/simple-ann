@@ -1,6 +1,6 @@
 // Author .......... Felix Brei
 // Creation Date ... 2016/11/12
-// Last changed .... 2016/11/12
+// Last changed .... 2016/11/13
 
 // Description
 // -----------
@@ -13,6 +13,8 @@
 #include "neuron_layer.h"
 #include "neuron.h"
 #include "wire.h"
+
+// START
 
 struct _NeuronLayer {
 	Neuron** neurons;
@@ -58,5 +60,38 @@ void connect_layers(NeuronLayer* src, NeuronLayer* dest) {
 
 }
 
-// START
+NeuronLayer* create_input(int num_neurons, int inputs_per_neuron, ActFunction* act) {
 
+	NeuronLayer* nl = malloc(sizeof(NeuronLayer));
+	nl->neurons = malloc( num_neurons * sizeof(Neuron*) );
+	nl->num_neurons = num_neurons;
+
+	for(int i = 0; i < num_neurons; i++) {
+		Neuron* n = alloc_neuron();
+		set_activation_function(n,act);
+		for(int j = 0; j < inputs_per_neuron; j++) {
+			Wire* w = alloc_wire();
+			add_dendrite(n,w);
+		}
+		nl->neurons[i] = n;
+	}
+
+	return nl;
+}
+
+NeuronLayer* create_output(int num_neurons, ActFunction* act) {
+
+	NeuronLayer* nl = malloc(sizeof(NeuronLayer));
+	nl->neurons = malloc( num_neurons * sizeof(Neuron*) );
+	nl->num_neurons = num_neurons;
+
+	for(int i = 0; i < num_neurons; i++) {
+		Neuron* n = alloc_neuron();
+		set_activation_function(n,act);
+		Wire* w = alloc_wire();
+		add_synapse(n,w);
+		nl->neurons[i] = n;
+	}
+
+	return nl;
+}

@@ -1,6 +1,6 @@
 // Author .......... Felix Brei
 // Creation Date ... 2016/11/01
-// Last changed .... 2016/11/11
+// Last changed .... 2016/11/13
 
 // Description
 // -----------
@@ -116,6 +116,9 @@ void add_dendrite(Neuron* n, Wire* w) {
 
 void remove_dendrite(Neuron* n, Wire* w) {
 
+	if(n == NULL)
+		return;
+
 	int num_dendrites = n->num_dendrites;
 
 	if( num_dendrites == 1) {
@@ -173,6 +176,9 @@ void add_synapse(Neuron* n, Wire* w) {
 
 void remove_synapse(Neuron* n, Wire* w) {
 	
+	if(n == NULL)
+		return;
+
 	int num_synapses = n->num_synapses;
 
 	if( num_synapses == 1 ) {
