@@ -45,4 +45,7 @@ void set_input(NeuronLayer*, double*);
 // Combines the outputs of all neurons of a layer into a single vector
 double* get_output(NeuronLayer*);
 
+// Sets the initial gradient for the backpropagation
+void set_initial_gradient(NeuronLayer*, double*);
+
 #endif

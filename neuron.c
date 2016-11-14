@@ -93,7 +93,7 @@ void add_dendrite(Neuron* n, Wire* w) {
 		n->dendrites = malloc(sizeof(Wire*));
 		n->dendrites[0] = w;
 		n->weights = malloc(sizeof(double));
-		n->weights[0] = 1.0;
+		n->weights[0] = 0.1 * ((double) rand()) / RAND_MAX;
 	} else {
 		Wire** new_dendrites = malloc( (n->num_dendrites+1) * sizeof(Wire*));
 		double* new_weights = malloc( (n->num_dendrites+1) * sizeof(double));
@@ -102,7 +102,7 @@ void add_dendrite(Neuron* n, Wire* w) {
 			new_weights[i] = n->weights[i];
 		}
 		new_dendrites[n->num_dendrites] = w;
-		new_weights[n->num_dendrites] = ((double) rand()) / RAND_MAX;
+		new_weights[n->num_dendrites] = 0.1 * ((double) rand()) / RAND_MAX;
 
 		free(n->weights);
 		free(n->dendrites);

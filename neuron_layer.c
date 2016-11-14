@@ -128,11 +128,19 @@ double* get_output(NeuronLayer* nl) {
 	return out;
 }
 
-void backprop_all(NeuronLayer* nl, double force) {
+void backprop_all(NeuronLayer* nl, double step_size) {
 	int num_neurons = nl->num_neurons;
 
 	for(int i = 0; i < num_neurons; i++) {
-		backprop(nl->neurons[i], force);
+		backprop(nl->neurons[i], step_size);
 	}
 
+}
+
+void set_initial_gradient(NeuronLayer* nl, double* gradient_vector) {
+	int num_neurons = nl->num_neurons;
+
+	for(int i = 0; i < num_neurons; i++) {
+		set_gradient( get_synapses(nl->neurons[i])[0], gradient_vector[i] );
+	}
 }
