@@ -41,8 +41,8 @@ int main(int argc, char** argv) {
 	double BACKPROP_STEP_SIZE = 0.0000000001;
 	double MAX_ERROR = 0.01;
 
-	const int MAP_HEIGHT = 50;
-	const int MAP_WIDTH = 50;
+	const int MAP_HEIGHT = 100;
+	const int MAP_WIDTH = 100;
 
 	// Suppose we want to learn the RGB components of a pixel of an image
 	double* target = malloc( 3 * sizeof(double));
@@ -136,7 +136,6 @@ int main(int argc, char** argv) {
 
 
 	// Write the perceptive map to a file
-	/*
 	
 	FILE *fp;
 	fp = fopen("perceptive_map.ppm", "w");
@@ -163,7 +162,6 @@ int main(int argc, char** argv) {
 
 
 	fclose(fp);
-	*/
 
 	// End of magic
 	// ===========================================================================
