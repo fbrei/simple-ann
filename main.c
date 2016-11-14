@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 	const int NUM_INPUTS = 2;
 	const int NUM_OUTPUTS = 3;
 	
-	const int MAX_NUM_TRAINING_ROUNDS = 50;
+	const int MAX_NUM_TRAINING_ROUNDS = 10000;
 	double BACKPROP_STEP_SIZE = 0.0000000001;
 	double MAX_ERROR = 0.01;
 
