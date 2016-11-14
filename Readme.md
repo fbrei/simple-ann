@@ -9,7 +9,6 @@ The main function implements some sample stuff that I use for testing and that g
 Todo List
 =========
 
-- So far you can only create single neurons. => implement layer architecture with some automizations and useful defaults
 - Implement a function that generates the perceptive map of a NN
 - simplify training process
 - allow to save the trained NN to a file and also read from it
