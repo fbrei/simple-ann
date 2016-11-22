@@ -32,16 +32,17 @@ int main(int argc, char** argv) {
 	init_activation_functions();
 
 	// Configuration variables
-	const int NUM_HIDDEN_LAYERS = 4;
-	const int NUM_NEURONS_PER_HIDDEN_LAYER = 32;
+	const int NUM_HIDDEN_LAYERS = 1;
+	const int NUM_NEURONS_PER_HIDDEN_LAYER = 4;
 	ActFunction* ACT_FUNCTION = SIGMOID;
 
 	const int NUM_INPUTS = 2;
 	const int NUM_OUTPUTS = 3;
 	
-	const int MAX_NUM_TRAINING_ROUNDS = 500000;
-	double BACKPROP_STEP_SIZE = 1;
-	double MAX_ERROR = 10.0;
+	const int MAX_NUM_TRAINING_ROUNDS = 100000000;
+	double BACKPROP_STEP_SIZE = 0.10;
+	double MAX_BACKPROP_SCALING = 10.0;
+	double MAX_ERROR = 1.0;
 	double MIN_ERROR_DELTA = 0.000001;
 
 	const int MAP_WIDTH = 1600;
@@ -66,7 +67,7 @@ int main(int argc, char** argv) {
 	second_pixel[0] =  1600;
 	second_pixel[1] =  900;
 
-	BACKPROP_STEP_SIZE /= (second_pixel[0] * second_pixel[1] * NUM_NEURONS_PER_HIDDEN_LAYER * NUM_HIDDEN_LAYERS);
+	BACKPROP_STEP_SIZE /= (MAP_WIDTH * MAP_HEIGHT * NUM_NEURONS_PER_HIDDEN_LAYER * NUM_HIDDEN_LAYERS);
 
 
 	// Allocate and connect everything ... and I mean, everything ;)
@@ -107,7 +108,7 @@ int main(int argc, char** argv) {
 	while(total_error > MAX_ERROR && round < MAX_NUM_TRAINING_ROUNDS) {
 
 		scaling = 1.0 / fabs(delta(total_error, old_error)),10.0;
-		scaling = (scaling > 100.0) ? 100.0 : scaling;
+		scaling = (scaling > MAX_BACKPROP_SCALING) ? MAX_BACKPROP_SCALING : scaling;
 		local_backprop_stepsize = BACKPROP_STEP_SIZE * scaling;
 		old_error = total_error;
 
@@ -126,7 +127,8 @@ int main(int argc, char** argv) {
 		error_vector[2] = first_target[2] - res[2];
 
 		total_error = fabs(error_vector[0]) + fabs(error_vector[1]) + fabs(error_vector[2]);
-
+		
+		free(res);
 		set_initial_gradient(out, error_vector);
 		backprop_all(out, local_backprop_stepsize);
 		for(int i = 0; i < NUM_HIDDEN_LAYERS; i++) {
@@ -158,8 +160,8 @@ int main(int argc, char** argv) {
 		backprop_all(in, local_backprop_stepsize);
 
 
-		if(round % 500 == 0) {
-			printf("%d | %d : ERROR:  %f \t %f \t %f \t Total: %f \t Backprop scaling %f \n", round, MAX_NUM_TRAINING_ROUNDS, fabs(error_vector[0]), fabs(error_vector[1]), fabs(error_vector[2]), total_error, scaling);
+		if(round % 10000 == 0) {
+			printf("%d | %d : ERROR:  %03.5f \t %03.5f \t %03.5f \t Total: %05.5f \t Backprop scaling %05.5f \n", round, MAX_NUM_TRAINING_ROUNDS, fabs(error_vector[0]), fabs(error_vector[1]), fabs(error_vector[2]), total_error, scaling);
 		}
 		free(res);
 
@@ -178,6 +180,7 @@ int main(int argc, char** argv) {
 		
 	res = get_output(out);
 	printf("The network fired: %f | %f \t %f | %f \t %f | %f \n", first_target[0], res[0], first_target[1], res[1], first_target[2], res[2]);
+	free(res);
 
 	set_input(in, second_pixel);
 
@@ -189,9 +192,11 @@ int main(int argc, char** argv) {
 		
 	res = get_output(out);
 	printf("The network fired: %f | %f \t %f | %f \t %f | %f \n", second_target[0], res[0], second_target[1], res[1], second_target[2], res[2]);
+	free(res);
 
 	// Write the perceptive map to a file
 	
+	/*
 	FILE *fp;
 	fp = fopen("perceptive_map.ppm", "w");
 
@@ -216,6 +221,7 @@ int main(int argc, char** argv) {
 	}
 
 	fclose(fp);
+	*/
 
 	printf("Done!\n");
 
@@ -234,7 +240,6 @@ int main(int argc, char** argv) {
 	free_neuron_layer(out);
 	free(first_pixel);
 	free(second_pixel);
-	free(res);
 	free(first_target);
 	free(second_target);
 
