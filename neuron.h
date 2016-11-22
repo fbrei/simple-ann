@@ -40,6 +40,9 @@ void connect(Neuron* src, Neuron* dest);
 // Adjust the weights of a neuron, scaled by step size
 void backprop(Neuron*, double);
 
+// Reset a given neuron to the last state
+void reset(Neuron*);
+
 // Allow access to inputs and outputs
 int get_num_dendrites(Neuron*);
 Wire** get_dendrites(Neuron*);

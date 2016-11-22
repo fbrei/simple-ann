@@ -38,6 +38,7 @@ void fire_all(NeuronLayer*);
 
 // Backprops through all neurons of a layer
 void backprop_all(NeuronLayer*, double);
+void reset_all(NeuronLayer*);
 
 // Feed an input vector to an input layer. Assumes one input per neuron
 void set_input(NeuronLayer*, double*);

@@ -23,6 +23,7 @@ struct _Neuron {
 
 	// The weight vector
 	double* weights;
+	double* old_weights;
 
 	// The outgoing connections
 	Wire** synapses;
@@ -31,6 +32,7 @@ struct _Neuron {
 	// The activation function and its threshold
 	ActFunction* act;
 	double theta;
+	double old_theta;
 };
 
 // Allocates a neuron without any functionality or connections (default)
@@ -41,12 +43,14 @@ Neuron* alloc_neuron() {
 	n->num_dendrites = 0;
 
 	n->weights = NULL;
+	n->old_weights = NULL;
 
 	n->synapses = NULL;
 	n->num_synapses = 0;
 
 	n->act = NULL;
 	n->theta = 0.0;
+	n->old_theta = 0.0;
 
 	return n;
 }
@@ -64,6 +68,7 @@ void free_neuron(Neuron* n) {
 
 	free(n->dendrites);
 	free(n->weights);
+	free(n->old_weights);
 
 	free(n->synapses);
 
@@ -213,6 +218,18 @@ void connect(Neuron* src, Neuron* dest) {
 }
 
 void backprop(Neuron* n, double STEP_SIZE) {
+
+	// Make a backup of old values
+	if(n->old_weights != NULL)
+		free(n->old_weights);
+
+	n->old_weights = malloc(n->num_dendrites * sizeof(double) );
+	for(int i = 0; i < n->num_dendrites; i++) {
+		n->old_weights[i] = n->weights[i];
+	}
+	n->old_theta = n->theta;
+
+
 	double incoming_gradient = 0.0;
 
 	for(int i = 0; i < n->num_synapses; i++) {
@@ -234,6 +251,18 @@ void backprop(Neuron* n, double STEP_SIZE) {
 		set_gradient(n->dendrites[i], weight * local_grad );
 	}
 }
+
+
+void reset(Neuron* n) {
+	free(n->weights);
+	n->weights = malloc(n->num_dendrites * sizeof(double));
+	for(int i = 0; i < n->num_dendrites; i++) {
+		n->weights[i] = n->old_weights[i];
+	}
+
+	n->theta = n->old_theta;
+}
+
 
 int get_num_dendrites(Neuron* n) { return n->num_dendrites; }
 Wire** get_dendrites(Neuron* n) { return n->dendrites; }

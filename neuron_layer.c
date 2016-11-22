@@ -137,6 +137,14 @@ void backprop_all(NeuronLayer* nl, double step_size) {
 
 }
 
+void reset_all(NeuronLayer* nl) {
+	int num_neurons = nl->num_neurons;
+
+	for(int i = 0; i < num_neurons; i++) {
+		reset(nl->neurons[i]);
+	}
+}
+
 void set_initial_gradient(NeuronLayer* nl, double* gradient_vector) {
 	int num_neurons = nl->num_neurons;
 
