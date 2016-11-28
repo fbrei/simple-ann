@@ -1,6 +1,5 @@
 // Author .......... Felix Brei
 // Creation Date ... 2016/11/12
-// Last changed .... 2016/11/13
 
 // Description
 // -----------

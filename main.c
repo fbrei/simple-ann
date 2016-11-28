@@ -1,6 +1,5 @@
 // Author .......... Felix Brei
 // Creation Date ... 2016/11/01
-// Last changed .... 2016/11/13
 
 // Description
 // -----------
@@ -42,7 +41,7 @@ int main(int argc, char** argv) {
 	const int MAX_NUM_TRAINING_ROUNDS = 10000000;
 	double BACKPROP_STEP_SIZE = 0.00001;
 	double MAX_BACKPROP_SCALING = 10.0;
-	double MAX_ERROR = 1.0;
+	double MAX_ERROR = 3.0;
 
 	const double STEPSIZE_REDUCTION_FACTOR = 0.1;
 	const int MAX_STEPSIZE_REDUCTION_ITERATIONS = 1000;

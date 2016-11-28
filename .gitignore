@@ -1,3 +1,5 @@
 *.un~
 s-ann
 Session.vim
+*.png
+*.ppm
