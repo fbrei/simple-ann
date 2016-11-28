@@ -23,7 +23,7 @@ void free_neuron(Neuron* n);
 void set_activation_function(Neuron*, ActFunction*);
 
 // 'Run' the neuron
-void fire(Neuron*);
+void fire_neuron(Neuron*);
 
 // Register dendrites (inputs) and synapses (outputs) at a neuron
 void add_dendrite(Neuron*, Wire*);
@@ -37,7 +37,7 @@ void remove_synapse(Neuron*, Wire*);
 void connect(Neuron* src, Neuron* dest);
 
 // Adjust the weights of a neuron, scaled by step size
-void backprop(Neuron*, double);
+void backprop_neuron(Neuron*, double);
 
 // Reset a given neuron to the last state
 void reset(Neuron*);

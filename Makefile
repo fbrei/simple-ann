@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-std=c99 -O0 -ggdb -lm
 RUNFLAGS=-std=c99 -Ofast -lm 
 OUTFILE=s-ann
-SOURCEFILES=main.c neuron.c wire.c activation_function.c neuron_layer.c
+SOURCEFILES=main.c neuron.c wire.c activation_function.c neuron_layer.c neural_net.c net_config.c
 
 all:
 	$(CC) $(CFLAGS) -o $(OUTFILE) $(SOURCEFILES)

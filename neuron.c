@@ -80,7 +80,7 @@ void set_activation_function(Neuron* n, ActFunction* act) {
 }
 
 // Sums up all the (weighed) inputs and plugs the result into the activation function. The result is stored in all synapses
-void fire(Neuron* n) {
+void fire_neuron(Neuron* n) {
 	double x = n->theta;
 	for(int i = 0; i < n->num_dendrites; i++) {
 		x += get_signal_strength(n->dendrites[i]) * n->weights[i];
@@ -216,7 +216,7 @@ void connect(Neuron* src, Neuron* dest) {
 	add_synapse(src,w);
 }
 
-void backprop(Neuron* n, double STEP_SIZE) {
+void backprop_neuron(Neuron* n, double STEP_SIZE) {
 
 	// Make a backup of old values
 	if(n->old_weights != NULL)

@@ -63,11 +63,11 @@ void fire_all(NeuronLayer* nl) {
 	int num_neurons = nl->num_neurons;
 
 	for(int i = 0; i < num_neurons; i++) {
-		fire(nl->neurons[i]);
+		fire_neuron(nl->neurons[i]);
 	}
 }
 
-NeuronLayer* create_input(int num_neurons, int inputs_per_neuron, ActFunction* act) {
+NeuronLayer* create_input(int num_neurons, ActFunction* act) {
 
 	NeuronLayer* nl = malloc(sizeof(NeuronLayer));
 	nl->neurons = malloc( num_neurons * sizeof(Neuron*) );
@@ -76,10 +76,8 @@ NeuronLayer* create_input(int num_neurons, int inputs_per_neuron, ActFunction* a
 	for(int i = 0; i < num_neurons; i++) {
 		Neuron* n = alloc_neuron();
 		set_activation_function(n,act);
-		for(int j = 0; j < inputs_per_neuron; j++) {
-			Wire* w = alloc_wire();
-			add_dendrite(n,w);
-		}
+		Wire* w = alloc_wire();
+		add_dendrite(n,w);
 		nl->neurons[i] = n;
 	}
 
@@ -131,7 +129,7 @@ void backprop_all(NeuronLayer* nl, double step_size) {
 	int num_neurons = nl->num_neurons;
 
 	for(int i = 0; i < num_neurons; i++) {
-		backprop(nl->neurons[i], step_size);
+		backprop_neuron(nl->neurons[i], step_size);
 	}
 
 }

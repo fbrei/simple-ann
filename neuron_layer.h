@@ -21,7 +21,7 @@
 NeuronLayer* alloc_neuron_layer(int, ActFunction*);
 
 // Create a designated input layer
-NeuronLayer* create_input(int num_neurons, int inputs_per_neuron, ActFunction*);
+NeuronLayer* create_input(int num_neurons, ActFunction*);
 
 // Create a designated output layer (one output per neuron)
 NeuronLayer* create_output(int num_neurons, ActFunction*);
