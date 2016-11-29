@@ -20,6 +20,7 @@ struct _NetConfig {
 	int NUM_NEURONS_PER_LAYER;
 
 	double BACKPROP_STEP_SIZE;
+	double BACKPROP_REDUCTION;
 
 	ActFunction* ACT_FUNCTION;
 	ActFunction* OUTPUT_FUNCTION;
@@ -54,3 +55,6 @@ ActFunction* get_act_function(NetConfig* nc) { return nc->ACT_FUNCTION; }
 
 void set_output_function(NetConfig* nc, ActFunction* act) { nc->OUTPUT_FUNCTION = act; }
 ActFunction* get_output_function(NetConfig* nc) { return nc->OUTPUT_FUNCTION; }
+
+void set_step_size_reduction(NetConfig* nc, double x) { nc->BACKPROP_REDUCTION = x; }
+double get_step_size_reduction(NetConfig* nc) { return nc->BACKPROP_REDUCTION; }

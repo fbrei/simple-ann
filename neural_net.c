@@ -7,6 +7,7 @@
 
 // System includes
 #include <stdlib.h>				// Contains useful constants
+#include <stdio.h>
 
 // Local includes
 #include "neural_net.h"
@@ -20,15 +21,7 @@ struct _NeuralNet {
 
 	NeuronLayer** hidden;
 
-	int NUM_INPUTS;
-	int NUM_OUTPUTS;
-
-	int NUM_HIDDEN_LAYERS;
-	int NUM_NEURONS_PER_LAYER;
-
-	double BACKPROP_STEP_SIZE;
-
-	ActFunction* ACT_FUNCTION;
+	NetConfig* config;
 };
 
 // START
@@ -37,33 +30,27 @@ NeuralNet* alloc_neural_net(NetConfig* conf) {
 
 	NeuralNet* nn = malloc(sizeof(NeuralNet));
 
-	nn->NUM_INPUTS = get_num_inputs(conf);
-	nn->NUM_OUTPUTS = get_num_outputs(conf);
-
-	nn->NUM_HIDDEN_LAYERS = get_num_hidden_layers(conf);
-	nn->NUM_NEURONS_PER_LAYER = get_num_neurons_per_layer(conf);
-
-	nn->BACKPROP_STEP_SIZE = get_backprop_step_size(conf);
-
 	nn->in = create_input(get_num_inputs(conf), get_act_function(conf));
 	nn->out = create_output(get_num_outputs(conf), get_output_function(conf));
+	nn->config = conf;
 
-	nn->hidden = malloc( nn->NUM_HIDDEN_LAYERS * sizeof(NeuronLayer*));
-	for(int i = 0; i < nn->NUM_HIDDEN_LAYERS; i++) {
+	int num_hidden = get_num_hidden_layers(conf);
+	nn->hidden = malloc( num_hidden * sizeof(NeuronLayer*));
+	for(int i = 0; i < num_hidden; i++) {
 		nn->hidden[i] = alloc_neuron_layer(get_num_neurons_per_layer(conf), get_act_function(conf));
 	}
 
 	connect_layers(nn->in, nn->hidden[0]);
-	for(int i = 1; i < nn->NUM_HIDDEN_LAYERS; i++) {
+	for(int i = 1; i < num_hidden; i++) {
 		connect_layers(nn->hidden[i-1], nn->hidden[i]);
 	}
-	connect_layers(nn->hidden[nn->NUM_HIDDEN_LAYERS-1], nn->out);
+	connect_layers(nn->hidden[num_hidden-1], nn->out);
 
 	return nn;
 }
 
 void free_neural_net(NeuralNet* nn) {
-	int num_layers = nn->NUM_HIDDEN_LAYERS;
+	int num_layers = get_num_hidden_layers(nn->config);
 
 	for(int i = 0; i < num_layers; i++) {
 		free_neuron_layer(nn->hidden[i]);
@@ -72,6 +59,8 @@ void free_neural_net(NeuralNet* nn) {
 
 	free_neuron_layer(nn->in);
 	free_neuron_layer(nn->out);
+
+	free_net_config(nn->config);
 
 	free(nn);
 }
@@ -85,7 +74,7 @@ double* get_output_vector(NeuralNet* nn) {
 }
 
 void fire(NeuralNet* nn) {
-	int num_layers = nn->NUM_HIDDEN_LAYERS;
+	int num_layers = get_num_hidden_layers(nn->config);
 
 	fire_all(nn->in);
 	for(int i = 0; i < num_layers; i++) {
@@ -94,9 +83,8 @@ void fire(NeuralNet* nn) {
 	fire_all(nn->out);
 }
 
-void backprop(NeuralNet* nn, double* err) {
-	int num_layers = nn->NUM_HIDDEN_LAYERS;
-	double step_size = nn->BACKPROP_STEP_SIZE;
+void backprop(NeuralNet* nn, double* err, double step_size) {
+	int num_layers = get_num_hidden_layers(nn->config);
 
 	set_initial_gradient(nn->out,err);
 	backprop_all(nn->out, step_size);
@@ -106,19 +94,59 @@ void backprop(NeuralNet* nn, double* err) {
 	backprop_all(nn->in, step_size);
 }
 
-void train(NeuralNet* nn, double* target) {
-	int num_outputs = nn->NUM_OUTPUTS;
+void reset(NeuralNet* nn) {
+	int num_layers = get_num_hidden_layers(nn->config);
+	reset_all(nn->in);
+	for(int i = 0; i < num_layers; i++) {
+		reset_all(nn->hidden[i]);
+	}
+	reset_all(nn->out);
+}
 
+void train(NeuralNet* nn, double* input, double* target) {
+	int num_outputs = get_num_outputs(nn->config);
+	double step_size = get_backprop_step_size(nn->config);
+	double reduction = get_step_size_reduction(nn->config);
+
+	set_input_vector(nn,input);
 	fire(nn);
 
 	double* out = get_output(nn->out);
 	double* err = malloc(num_outputs * sizeof(double));
+	double initial_error = 0.0;
+	double abs_error = 0.0;
 	for(int i = 0; i < num_outputs; i++) {
 		err[i] = target[i] - out[i];
+		abs_error = (err[i] > 0) ? err[i] : -err[i];
+		initial_error += abs_error * abs_error;
 	}
 
-	backprop(nn,err);
-
+	backprop(nn,err,step_size);
 	free(out);
+
+	double new_error = initial_error + 1.0;
+
+	
+	while(new_error > initial_error) {
+		new_error = 0.0;
+		set_input_vector(nn,input);
+		fire(nn);
+	
+		out = get_output(nn->out);
+		for(int i = 0; i < num_outputs; i++) {
+			abs_error = target[i] - out[i];
+			new_error += abs_error * abs_error;
+		}
+
+		if(new_error > initial_error) {
+			reset(nn);
+			step_size *= reduction;
+			backprop(nn,err,step_size);
+		}
+
+		free(out);
+	}
+	
+	printf("New error: %lf\t", new_error);
 	free(err);
 }

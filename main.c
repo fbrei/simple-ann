@@ -30,24 +30,17 @@ int main(int argc, char** argv) {
 	init_activation_functions();
 
 	// Configuration variables
-	const int NUM_HIDDEN_LAYERS = 1;
-	const int NUM_NEURONS_PER_HIDDEN_LAYER = 32;
+	const int NUM_HIDDEN_LAYERS = 3;
+	const int NUM_NEURONS_PER_HIDDEN_LAYER = 8;
 	ActFunction* ACT_FUNCTION = SIGMOID;
 
 	const int NUM_INPUTS = 2;
 	const int NUM_OUTPUTS = 3;
 	
 	const int MAX_NUM_TRAINING_ROUNDS = 10000000;
-	double BACKPROP_STEP_SIZE = 0.00001;
-	double MAX_BACKPROP_SCALING = 10.0;
-	double MAX_ERROR = 3.0;
+	double BACKPROP_STEP_SIZE = 1.0;
 
 	const double STEPSIZE_REDUCTION_FACTOR = 0.1;
-	const int MAX_STEPSIZE_REDUCTION_ITERATIONS = 1000;
-
-	const int MAP_WIDTH = 1600;
-	const int MAP_HEIGHT = 900;
-
 
 	// Creating the config and setting up the neural net
 	NetConfig* conf = alloc_net_config();
@@ -63,6 +56,8 @@ int main(int argc, char** argv) {
 
 	set_backprop_step_size(conf, BACKPROP_STEP_SIZE);
 
+	set_step_size_reduction(conf, STEPSIZE_REDUCTION_FACTOR);
+
 	NeuralNet* nn = alloc_neural_net(conf);
 
 
@@ -72,8 +67,8 @@ int main(int argc, char** argv) {
 	trainings_input[1] = 90;
 
 	double* trainings_output = malloc(3*sizeof(double));
-	trainings_output[0] = 66;
-	trainings_output[1] = 166;
+	trainings_output[0] = 255;
+	trainings_output[1] = 0;
 	trainings_output[2] = 255;
 
 	set_input_vector(nn, trainings_input);
@@ -83,14 +78,13 @@ int main(int argc, char** argv) {
 	printf("Initial output: %lf | %lf | %lf\n", out[0], out[1], out[2]);
 	free(out);
 
-	train(nn, trainings_output);
+	for(int i = 0; i < 20; i++) {
+		train(nn, trainings_input, trainings_output);
+		out = get_output_vector(nn);
+		printf("Round %d: %lf | %lf | %lf\n", i+1, out[0], out[1], out[2]);
+		free(out);
+	}
 
-	set_input_vector(nn, trainings_input);
-	fire(nn);
-	out = get_output_vector(nn);
-	printf("Initial output: %lf | %lf | %lf\n", out[0], out[1], out[2]);
-	free(out);
-	
 
 	free(trainings_input);
 	free(trainings_output);
@@ -98,7 +92,6 @@ int main(int argc, char** argv) {
 
 
 	free_neural_net(nn);
-	free_net_config(conf);
 	free_activation_functions();
 	return EXIT_SUCCESS;
 }

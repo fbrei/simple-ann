@@ -138,7 +138,7 @@ void reset_all(NeuronLayer* nl) {
 	int num_neurons = nl->num_neurons;
 
 	for(int i = 0; i < num_neurons; i++) {
-		reset(nl->neurons[i]);
+		reset_neuron(nl->neurons[i]);
 	}
 }
 

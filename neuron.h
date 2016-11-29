@@ -40,7 +40,7 @@ void connect(Neuron* src, Neuron* dest);
 void backprop_neuron(Neuron*, double);
 
 // Reset a given neuron to the last state
-void reset(Neuron*);
+void reset_neuron(Neuron*);
 
 // Allow access to inputs and outputs
 int get_num_dendrites(Neuron*);

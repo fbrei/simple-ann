@@ -252,7 +252,7 @@ void backprop_neuron(Neuron* n, double STEP_SIZE) {
 }
 
 
-void reset(Neuron* n) {
+void reset_neuron(Neuron* n) {
 	free(n->weights);
 	n->weights = malloc(n->num_dendrites * sizeof(double));
 	for(int i = 0; i < n->num_dendrites; i++) {

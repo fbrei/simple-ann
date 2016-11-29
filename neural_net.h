@@ -25,7 +25,7 @@ double* get_output_vector(NeuralNet*);
 
 void fire(NeuralNet*);
 
-// After setting an input vector, train a network towards an output vector (once)
-void train(NeuralNet*, double*);
+// Set an input vector and train a network towards an output vector (once)
+void train(NeuralNet*, double*, double*);
 
 #endif

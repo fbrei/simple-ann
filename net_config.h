@@ -42,4 +42,7 @@ ActFunction* get_act_function(NetConfig*);
 void set_output_function(NetConfig*, ActFunction*);
 ActFunction* get_output_function(NetConfig*);
 
+void set_step_size_reduction(NetConfig*,double);
+double get_step_size_reduction(NetConfig*);
+
 #endif
