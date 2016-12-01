@@ -23,6 +23,9 @@ ActFunction* ID;
 // Infamous sigmoid function ('squashing function')
 ActFunction* SIGMOID;
 
+// Powerful tanh
+ActFunction* TANH;
+
 // Initialize the default activation functions
 void init_activation_functions();
 

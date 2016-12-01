@@ -106,7 +106,7 @@ void add_dendrite(Neuron* n, Wire* w) {
 			new_weights[i] = n->weights[i];
 		}
 		new_dendrites[n->num_dendrites] = w;
-		new_weights[n->num_dendrites] = 0.1 * ((double) rand()) / RAND_MAX;
+		new_weights[n->num_dendrites] = (double) rand() / RAND_MAX - 0.5;
 
 		free(n->weights);
 		free(n->dendrites);

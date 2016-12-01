@@ -31,8 +31,8 @@ int main(int argc, char** argv) {
 
 	// Configuration variables
 	const int NUM_HIDDEN_LAYERS = 3;
-	const int NUM_NEURONS_PER_HIDDEN_LAYER = 8;
-	ActFunction* ACT_FUNCTION = SIGMOID;
+	const int NUM_NEURONS_PER_HIDDEN_LAYER = 16;
+	ActFunction* ACT_FUNCTION = TANH;
 
 	const int NUM_INPUTS = 2;
 	const int NUM_OUTPUTS = 3;
