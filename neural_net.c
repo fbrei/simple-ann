@@ -7,7 +7,6 @@
 
 // System includes
 #include <stdlib.h>				// Contains useful constants
-#include <stdio.h>
 
 // Local includes
 #include "neural_net.h"
@@ -43,6 +42,9 @@ NeuralNet* alloc_neural_net(NetConfig* conf) {
 	connect_layers(nn->in, nn->hidden[0]);
 	for(int i = 1; i < num_hidden; i++) {
 		connect_layers(nn->hidden[i-1], nn->hidden[i]);
+		for(int j = 0; j < i; j++) {
+			connect_layers(nn->hidden[j], nn->hidden[i]);
+		}
 	}
 	connect_layers(nn->hidden[num_hidden-1], nn->out);
 
@@ -105,8 +107,10 @@ void reset(NeuralNet* nn) {
 
 void train(NeuralNet* nn, double* input, double* target) {
 	int num_outputs = get_num_outputs(nn->config);
-	double step_size = get_backprop_step_size(nn->config);
+	double step_size = (get_backprop_step_size(nn->config));
 	double reduction = get_step_size_reduction(nn->config);
+
+	step_size *= (rand() % 100000) + 1.0;
 
 	set_input_vector(nn,input);
 	fire(nn);
@@ -126,7 +130,6 @@ void train(NeuralNet* nn, double* input, double* target) {
 
 	double new_error = initial_error + 1.0;
 
-	
 	while(new_error > initial_error) {
 		new_error = 0.0;
 		set_input_vector(nn,input);
@@ -146,7 +149,6 @@ void train(NeuralNet* nn, double* input, double* target) {
 
 		free(out);
 	}
-	
-	printf("New error: %lf\t", new_error);
+		
 	free(err);
 }

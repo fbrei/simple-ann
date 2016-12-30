@@ -30,17 +30,20 @@ int main(int argc, char** argv) {
 	init_activation_functions();
 
 	// Configuration variables
-	const int NUM_HIDDEN_LAYERS = 3;
+	const int NUM_HIDDEN_LAYERS = 6;
 	const int NUM_NEURONS_PER_HIDDEN_LAYER = 16;
-	ActFunction* ACT_FUNCTION = TANH;
+	ActFunction* ACT_FUNCTION = ID;
 
 	const int NUM_INPUTS = 2;
 	const int NUM_OUTPUTS = 3;
 	
-	const int MAX_NUM_TRAINING_ROUNDS = 10000000;
-	double BACKPROP_STEP_SIZE = 1.0;
+	const int MAX_NUM_TRAINING_ROUNDS = 1000000000;
+	double BACKPROP_STEP_SIZE = 0.0000000001;
 
 	const double STEPSIZE_REDUCTION_FACTOR = 0.1;
+
+	//const int OUTPUT_IMAGE_REFRESH_INTERVAL = width * height * 0.1;
+	const int OUTPUT_IMAGE_REFRESH_INTERVAL = 100;
 
 	// Creating the config and setting up the neural net
 	NetConfig* conf = alloc_net_config();
@@ -60,17 +63,125 @@ int main(int argc, char** argv) {
 
 	NeuralNet* nn = alloc_neural_net(conf);
 
-
 	// Testing area, to be deleted
-	double* trainings_input = malloc( 2*sizeof(double));
-	trainings_input[0] = 60;
-	trainings_input[1] = 90;
+	FILE* image_file = fopen("square.ppm", "r");
+	char format[2];
+	fscanf(image_file, "%s\n", format);
 
-	double* trainings_output = malloc(3*sizeof(double));
-	trainings_output[0] = 255;
-	trainings_output[1] = 0;
-	trainings_output[2] = 255;
+	char width_text[3], height_text[3];
+	fscanf(image_file, "%s\n", width_text);
+	fscanf(image_file, "%s\n", height_text);
 
+	int width = atoi(width_text);
+	int height = atoi(height_text);
+
+	printf("Bildformat: %s\n", format);
+	printf("Breite: %d\n", width);
+	printf("Hoehe:  %d\n", height);
+	fscanf(image_file, "%s\n", width_text);
+
+
+	char tmp[3];
+	printf("Reading image \n");
+
+	int ***image = malloc(height * sizeof(int**));
+	double*** inputs = malloc(height * sizeof(double**));
+
+	for(int row = 0; row < height; row++) {
+		image[row] = malloc(width * sizeof(int*));
+		inputs[row] = malloc(width * sizeof(double*));
+
+		for(int col = 0; col < width; col++) {
+			image[row][col] = malloc(NUM_OUTPUTS * sizeof(int));
+			inputs[row][col] = malloc(NUM_INPUTS * sizeof(double));
+			for(int k = 0; k < NUM_OUTPUTS; k++) {
+				fscanf(image_file, "%s\n", tmp);
+				image[row][col][k] = (atoi(tmp) - 120) / 2;
+			}
+			inputs[row][col][0] =  20 * ((row / (0.5 * height)) - 1.0);
+			inputs[row][col][1] =  20 * ((col / (0.5 * width)) - 1.0);
+		}
+
+		printf(".");
+		//printf("%d\%\n", (int) ((100.0 * i) / width));
+	}
+	printf("100\%\n");
+	fclose(image_file);
+
+
+	double* trainings_input = malloc(NUM_INPUTS * sizeof(double));
+	double* trainings_output = malloc(NUM_OUTPUTS * sizeof(double));
+
+	for(int runs = 1; runs <= MAX_NUM_TRAINING_ROUNDS; runs++) {
+		int lucky_row = rand() % height;
+		int lucky_col = rand() % width;
+
+		
+		/*
+		int n = rand() % 2;
+		int n = runs % 2;
+		if(n == 0) {
+			lucky_row = 0;
+			lucky_col = 0;
+		} else {
+			lucky_col = width-1;
+			lucky_row = height-1;
+		}
+		*/
+
+		/*
+		printf("Training pixel : %d | %d\n", lucky_x, lucky_y);
+		printf("Input vector   : %lf | %lf\n", inputs[lucky_x][lucky_y][0], inputs[lucky_x][lucky_y][1]);
+		printf("Target vector  : %d | %d | %d\n", image[lucky_x][lucky_y][0], image[lucky_x][lucky_y][1], image[lucky_x][lucky_y][2]);
+		*/
+
+		for(int lucky_row = 0; lucky_row < height; lucky_row += 5) {
+		for(int lucky_col = 0; lucky_col < width; lucky_col += 5) {
+
+		trainings_input[0] = inputs[lucky_row][lucky_col][0];
+		trainings_input[1] = inputs[lucky_row][lucky_col][1];
+				
+		trainings_output[0] = image[lucky_row][lucky_col][0];
+		trainings_output[1] = image[lucky_row][lucky_col][1];
+		trainings_output[2] = image[lucky_row][lucky_col][2];
+
+		train(nn, trainings_input, trainings_output);
+
+		}}
+
+		if(runs % OUTPUT_IMAGE_REFRESH_INTERVAL == 0 || runs == 1) {
+		
+			printf("Writing result (run: %09d | %d)\n", runs, MAX_NUM_TRAINING_ROUNDS);
+
+			char fname[10];
+			sprintf(fname, "%09d.ppm",runs);
+			FILE* res_file = fopen(fname, "w");
+			fprintf(res_file, "P3\n%d\n%d\n255\n", width, height);
+			double* out;
+			for(int row = 0; row < height; row++) {
+				for(int col = 0; col < width; col++) {
+					trainings_input[0] = inputs[row][col][0];
+					trainings_input[1] = inputs[row][col][1];
+
+					set_input_vector(nn, trainings_input);
+					fire(nn);
+					out = get_output_vector(nn);
+					int r = min(255,max(0,(out[0] * 2 + 120)*1));
+					int g = min(255,max(0,(out[1] * 2 + 120)*2));
+					int b = min(255,max(0,(out[2] * 2 + 120)*2));
+					free(out);
+		
+					fprintf(res_file, "%d\n%d\n%d\n",r,g,b);
+				}
+			}
+		
+			fclose(res_file);
+			printf("Done!\n");
+		}
+	}
+
+
+	/*
 	set_input_vector(nn, trainings_input);
 	fire(nn);
 
@@ -89,7 +200,18 @@ int main(int argc, char** argv) {
 	free(trainings_input);
 	free(trainings_output);
 	// End of testing area
+	*/
 
+	for(int i = 0; i < width; i++) {
+		for(int j = 0; j < height; j++) {
+			free(image[i][j]);
+			free(inputs[i][j]);
+		}
+		free(image[i]);
+		free(inputs[i]);
+	}
+	free(image);
+	free(inputs);
 
 	free_neural_net(nn);
 	free_activation_functions();

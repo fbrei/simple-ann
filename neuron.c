@@ -24,6 +24,9 @@ struct _Neuron {
 	double* weights;
 	double* old_weights;
 
+	// The learning rates
+	double* learning_rates;
+
 	// The outgoing connections
 	Wire** synapses;
 	int num_synapses;
@@ -43,6 +46,8 @@ Neuron* alloc_neuron() {
 
 	n->weights = NULL;
 	n->old_weights = NULL;
+
+	n->learning_rates = NULL;
 
 	n->synapses = NULL;
 	n->num_synapses = 0;
@@ -68,6 +73,8 @@ void free_neuron(Neuron* n) {
 	free(n->dendrites);
 	free(n->weights);
 	free(n->old_weights);
+
+	free(n->learning_rates);
 
 	free(n->synapses);
 
@@ -96,23 +103,35 @@ void add_dendrite(Neuron* n, Wire* w) {
 	if(n->num_dendrites == 0) {
 		n->dendrites = malloc(sizeof(Wire*));
 		n->dendrites[0] = w;
+
 		n->weights = malloc(sizeof(double));
 		n->weights[0] = 0.1 * ((double) rand()) / RAND_MAX;
+	
+		n->learning_rates = malloc(sizeof(double));
+		n->learning_rates[0] = rand() / (double) RAND_MAX + 0.5;
 	} else {
 		Wire** new_dendrites = malloc( (n->num_dendrites+1) * sizeof(Wire*));
 		double* new_weights = malloc( (n->num_dendrites+1) * sizeof(double));
+		double* new_learning_rates = malloc( (n->num_dendrites+1) * sizeof(double));
+
 		for(int i = 0; i < n->num_dendrites; i++) {
 			new_dendrites[i] = n->dendrites[i];
 			new_weights[i] = n->weights[i];
+			new_learning_rates[i] = n->learning_rates[i];
 		}
 		new_dendrites[n->num_dendrites] = w;
-		new_weights[n->num_dendrites] = (double) rand() / RAND_MAX - 0.5;
+		new_weights[n->num_dendrites] = (((double) rand()) / RAND_MAX) - 0.5;
+		new_learning_rates[n->num_dendrites] = rand() / (double) RAND_MAX + 0.5;
 
 		free(n->weights);
 		free(n->dendrites);
+		free(n->learning_rates);
+
 		n->weights = new_weights;
 		n->dendrites = new_dendrites;
+		n->learning_rates = new_learning_rates;
 	}
+
 	set_successor(w, n);
 	set_gradient(w, 1.0);
 	n->num_dendrites++;
@@ -245,8 +264,8 @@ void backprop_neuron(Neuron* n, double STEP_SIZE) {
 	for(int i = 0; i < n->num_dendrites; i++) {
 		double weight = n->weights[i];
 		double signal = get_signal_strength(n->dendrites[i]);
-		n->weights[i] += incoming_gradient * STEP_SIZE  * signal * local_grad;
-		set_signal_strength(n->dendrites[i], get_signal_strength(n->dendrites[i]) + incoming_gradient * STEP_SIZE * weight * local_grad);
+		n->weights[i] += incoming_gradient * STEP_SIZE  * signal * local_grad * n->learning_rates[i];
+		set_signal_strength(n->dendrites[i], get_signal_strength(n->dendrites[i]) + incoming_gradient * STEP_SIZE * weight * local_grad * n->learning_rates[i]);
 		set_gradient(n->dendrites[i], weight * local_grad );
 	}
 }
