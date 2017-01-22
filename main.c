@@ -30,14 +30,14 @@ int main(int argc, char** argv) {
 	init_activation_functions();
 
 	// Configuration variables
-	const int NUM_HIDDEN_LAYERS = 6;
-	const int NUM_NEURONS_PER_HIDDEN_LAYER = 16;
+	const int NUM_HIDDEN_LAYERS = 3;
+	const int NUM_NEURONS_PER_HIDDEN_LAYER = 8;
 	ActFunction* ACT_FUNCTION = ID;
 
 	const int NUM_INPUTS = 2;
 	const int NUM_OUTPUTS = 3;
 	
-	const int MAX_NUM_TRAINING_ROUNDS = 1000000000;
+	const int MAX_NUM_TRAINING_ROUNDS = 1000000;
 	double BACKPROP_STEP_SIZE = 0.0000000001;
 
 	const double STEPSIZE_REDUCTION_FACTOR = 0.1;
@@ -135,8 +135,6 @@ int main(int argc, char** argv) {
 		printf("Target vector  : %d | %d | %d\n", image[lucky_x][lucky_y][0], image[lucky_x][lucky_y][1], image[lucky_x][lucky_y][2]);
 		*/
 
-		for(int lucky_row = 0; lucky_row < height; lucky_row += 5) {
-		for(int lucky_col = 0; lucky_col < width; lucky_col += 5) {
 
 		trainings_input[0] = inputs[lucky_row][lucky_col][0];
 		trainings_input[1] = inputs[lucky_row][lucky_col][1];
@@ -147,8 +145,7 @@ int main(int argc, char** argv) {
 
 		train(nn, trainings_input, trainings_output);
 
-		}}
-
+		/*
 		if(runs % OUTPUT_IMAGE_REFRESH_INTERVAL == 0 || runs == 1) {
 		
 			printf("Writing result (run: %09d | %d)\n", runs, MAX_NUM_TRAINING_ROUNDS);
@@ -178,6 +175,7 @@ int main(int argc, char** argv) {
 			fclose(res_file);
 			printf("Done!\n");
 		}
+		*/
 	}
 
 
@@ -197,13 +195,14 @@ int main(int argc, char** argv) {
 	}
 
 
-	free(trainings_input);
-	free(trainings_output);
 	// End of testing area
 	*/
+	free(trainings_input);
+	free(trainings_output);
 
-	for(int i = 0; i < width; i++) {
-		for(int j = 0; j < height; j++) {
+
+	for(int i = 0; i < height; i++) {
+		for(int j = 0; j < width; j++) {
 			free(image[i][j]);
 			free(inputs[i][j]);
 		}

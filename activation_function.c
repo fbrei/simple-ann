@@ -30,6 +30,10 @@ double sigmoid_grad(double x) { return exp(-x) / ( (1.0 + exp(-x)) * (1.0 + exp(
 // The tanh function (even more powerful). The basic function is already defined in the math library!
 double tanh_grad(double x) { double tx = tanh(x); return 1.0 - tx * tx; }
 
+// Tanh with a linear term added
+double tanh_lin(double x) { return tanh(x) + 1.0 * x; }
+double tanh_lin_grad(double x) { double tx = tanh(x); return 1.0 - tx * tx + 1.0; }
+
 void init_activation_functions() {
 
 	ID = malloc(sizeof(ActFunction));
@@ -43,12 +47,17 @@ void init_activation_functions() {
 	TANH = malloc(sizeof(ActFunction));
 	TANH->fnct = &tanh;
 	TANH->grad = &tanh_grad;
+
+	TANH_LIN = malloc(sizeof(ActFunction));
+	TANH_LIN->fnct = &tanh_lin;
+	TANH_LIN->grad = &tanh_lin_grad;
 }
 
 void free_activation_functions() {
 	free(ID);
 	free(SIGMOID);
 	free(TANH);
+	free(TANH_LIN);
 }
 
 double calculate_value(ActFunction* act, double x) { return act->fnct(x); }

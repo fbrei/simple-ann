@@ -26,6 +26,9 @@ ActFunction* SIGMOID;
 // Powerful tanh
 ActFunction* TANH;
 
+// Tanh with a small linear term
+ActFunction* TANH_LIN;
+
 // Initialize the default activation functions
 void init_activation_functions();
 
